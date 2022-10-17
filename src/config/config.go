@@ -1,8 +1,8 @@
 package config
 
 import (
-	"github.com/KSkun/health-iot-backend/global"
 	"gopkg.in/yaml.v3"
+	"log"
 	"os"
 )
 
@@ -13,6 +13,11 @@ type Config struct {
 		Addr string `yaml:"addr"`
 		Port int    `yaml:"port"`
 	} `yaml:"app"`
+	MongoConfig struct {
+		Addr     string `yaml:"addr"`
+		Port     int    `yaml:"port"`
+		Database string `yaml:"database"`
+	} `yaml:"mongo"`
 	Debug bool `yaml:"debug"`
 }
 
@@ -23,16 +28,18 @@ var Debug bool
 func InitConfig() {
 	configPath, found := os.LookupEnv("CONFIG_FILE")
 	if !found {
-		global.Logger.Infof("[Config] CONFIG_FILE env not found, use default config file %s instead", defaultConfigPath)
+		log.Printf("[Config] CONFIG_FILE env not found, use default config file %s instead", defaultConfigPath)
 		configPath = defaultConfigPath
 	}
+	log.Printf("[Config] Loading config file %s", configPath)
 	configBytes, err := os.ReadFile(configPath)
 	if err != nil {
-		global.Logger.Fatalf("[Config] Error when reading config file %s, %s", configPath, err.Error())
+		log.Fatalf("[Config] Error when reading config file %s, %s", configPath, err.Error())
 	}
 	err = yaml.Unmarshal(configBytes, &C)
 	if err != nil {
-		global.Logger.Fatalf("[Config] Error when reading config file %s, %s", configPath, err.Error())
+		log.Fatalf("[Config] Error when reading config file %s, %s", configPath, err.Error())
 	}
 	Debug = C.Debug
+	log.Printf("[Config] Init done")
 }

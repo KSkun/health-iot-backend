@@ -1,4 +1,6 @@
 **/.idea/
+**/debug.yml
+**/prod.yml
 
 ### Go template
 # Binaries for programs and plugins
