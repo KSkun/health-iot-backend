@@ -5,4 +5,7 @@ mongo:
   addr: 127.0.0.1
   port: 27017
   database: health-iot
+jwt:
+  secret: health-iot
+  expire_minutes: 180
 debug: true

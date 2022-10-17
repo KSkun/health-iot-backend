@@ -4,6 +4,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
+	"time"
 )
 
 const defaultConfigPath = "default.yml"
@@ -18,6 +19,12 @@ type Config struct {
 		Port     int    `yaml:"port"`
 		Database string `yaml:"database"`
 	} `yaml:"mongo"`
+	JWTConfig struct {
+		Secret         string        `yaml:"secret"`
+		SecretBytes    []byte        `yaml:"-"`
+		ExpireMinutes  int           `yaml:"expire_minutes"`
+		ExpireDuration time.Duration `yaml:"-"`
+	} `yaml:"jwt"`
 	Debug bool `yaml:"debug"`
 }
 
@@ -40,6 +47,12 @@ func InitConfig() {
 	if err != nil {
 		log.Fatalf("[Config] Error when reading config file %s, %s", configPath, err.Error())
 	}
-	Debug = C.Debug
+	postInitConfig()
 	log.Printf("[Config] Init done")
+}
+
+func postInitConfig() {
+	Debug = C.Debug
+	C.JWTConfig.SecretBytes = []byte(C.JWTConfig.Secret)
+	C.JWTConfig.ExpireDuration = time.Minute * time.Duration(C.JWTConfig.ExpireMinutes)
 }
