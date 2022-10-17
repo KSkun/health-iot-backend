@@ -39,7 +39,7 @@ func main() {
 	global.EchoInst.Debug = config.Debug
 
 	config.InitConfig()
-	model.InitMongo()
+	model.InitModel()
 	controller.InitController(global.EchoInst)
 
 	log.Printf("[Main] Starting server")

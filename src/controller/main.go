@@ -9,11 +9,11 @@ func InitController(echo *echo.Echo) {
 	groupAPI := echo.Group("/api")
 
 	groupAPIV1 := groupAPI.Group("/v1")
-	InitControllerV1(groupAPIV1)
+	initControllerV1(groupAPIV1)
 	log.Printf("[Controller] Init done")
 }
 
-func InitControllerV1(group *echo.Group) {
+func initControllerV1(group *echo.Group) {
 	groupUserV1 := group.Group("/user")
-	InitUserGroupV1(groupUserV1)
+	initUserGroupV1(groupUserV1)
 }
