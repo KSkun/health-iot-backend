@@ -1,6 +1,6 @@
 package param
 
-type ReqCreateUserV1 struct {
-	Name     string `json:"name" validate:"required"`
-	Password string `json:"password" validate:"required,printascii,gte=6"`
+type ReqUserSimpleV1 struct {
+	Name     string `json:"name" query:"name" validate:"required"`
+	Password string `json:"password" query:"password" validate:"required,printascii,gte=6"`
 }

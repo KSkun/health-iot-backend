@@ -11,7 +11,6 @@ const defaultTimeout = 100 * time.Millisecond // 100 ms
 type IModel interface {
 	CreateUser(name string, password string) (primitive.ObjectID, error)
 	GetUserByName(name string) (UserObject, bool, error)
-	//CompareUserPassword(name string, password string) (bool, error)
 }
 
 var M IModel
