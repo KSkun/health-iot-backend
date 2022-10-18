@@ -14,6 +14,7 @@ type IModel interface {
 	GetUserByName(name string) (UserObject, bool, error)
 	// device.go
 	CreateDevice(name string, serial string, ownerID primitive.ObjectID) (primitive.ObjectID, error)
+	GetDevicesByOwner(ownerID primitive.ObjectID) ([]DeviceObject, error)
 }
 
 var M IModel

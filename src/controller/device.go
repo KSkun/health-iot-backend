@@ -29,3 +29,19 @@ func HandlerCreateDeviceV1(ctx echo.Context) error {
 	}
 	return util.SuccessResp(ctx, http.StatusOK, echo.Map{"id": id.Hex()})
 }
+
+func HandlerGetDevicesV1(ctx echo.Context) error {
+	// Insert device to database
+	userID := ctx.Get("id").(primitive.ObjectID)
+	devices_, err := model.M.GetDevicesByOwner(userID)
+	if err != nil {
+		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
+	}
+	devices := []param.RspDeviceSimpleV1{}
+	for _, d_ := range devices_ {
+		d := param.RspDeviceSimpleV1{}
+		d.FromDeviceObject(d_)
+		devices = append(devices, d)
+	}
+	return util.SuccessResp(ctx, http.StatusOK, echo.Map{"devices": devices})
+}

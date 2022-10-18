@@ -1,6 +1,12 @@
 app:
   addr: 127.0.0.1
   port: 8000
+  online_timeout_seconds: 5
+  heart_rate_threshold:
+    low: 40
+    high: 120
+  blood_oxygen_threshold: 95
+  battery_threshold: 20
 mongo:
   addr: 127.0.0.1
   port: 27017
