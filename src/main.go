@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/KSkun/health-iot-backend/config"
-	"github.com/KSkun/health-iot-backend/controller"
 	"github.com/KSkun/health-iot-backend/global"
 	"github.com/KSkun/health-iot-backend/middleware"
 	"github.com/KSkun/health-iot-backend/model"
+	"github.com/KSkun/health-iot-backend/router"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	"log"
@@ -23,7 +23,7 @@ func main() {
 
 	config.InitConfig()
 	model.InitModel()
-	controller.InitController(global.EchoInst)
+	router.InitRouter(global.EchoInst)
 
 	log.Printf("[Main] Starting server")
 	addr := fmt.Sprintf("%s:%d", config.C.AppConfig.Addr, config.C.AppConfig.Port)

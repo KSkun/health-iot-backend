@@ -1,0 +1,10 @@
+POST http://localhost:8000/api/v1/device
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJoZWFsdGgtaW90LWJhY2tlbmQiLCJzdWIiOiI2MzRkM2M2OWYxMjM3YzhkOTRlZDA3NmMiLCJleHAiOjE2NjYxNjMwMzksImlhdCI6MTY2NjA3NjYzOX0.nunqv648U-NMVIczbEeKKtW4oVxnP0gOuoqbA7-r_AU
+Content-Type: application/json
+
+{
+  "name": "test-device",
+  "serial": "123456"
+}
+
+###

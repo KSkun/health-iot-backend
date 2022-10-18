@@ -8,12 +8,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"log"
+	"os"
+)
+
+const (
+	colNameUser   = "user"
+	colNameDevice = "device"
 )
 
 type mongoModel struct {
-	client   *mongo.Client
-	database *mongo.Database
-	colUser  *mongo.Collection
+	client    *mongo.Client
+	database  *mongo.Database
+	colUser   *mongo.Collection
+	colDevice *mongo.Collection
 }
 
 func initMongo() {
@@ -40,13 +47,16 @@ func initMongo() {
 	// Init MongoModel
 	db := client.Database(config.C.MongoConfig.Database)
 	model := mongoModel{client: client, database: db}
-	model.colUser = model.database.Collection("user")
+	model.colUser = model.database.Collection(colNameUser)
+	model.colDevice = model.database.Collection(colNameDevice)
 	// Init mongo database
-	if !exists {
+	if !exists || os.Getenv("MONGO_FORCE_INIT") == "1" {
+		log.Printf("[Mongo] Database does not exists, initializing")
 		err = initMongoDatabase(&model)
 		if err != nil {
 			log.Fatalf("[Mongo] Error when initializing mongo database, %s", err.Error())
 		}
+		log.Printf("[Mongo] Init database done")
 	}
 
 	M = &model
@@ -73,8 +83,17 @@ func checkDatabaseExist(client *mongo.Client) (bool, error) {
 func initMongoDatabase(m *mongoModel) error {
 	ctx, cancel := defaultContext()
 	defer cancel()
+	log.Printf("[Mongo] Create unique index 'name' of collection 'user'")
 	_, err := m.colUser.Indexes().CreateOne(ctx, mongo.IndexModel{
 		Keys:    bson.M{"name": 1},
+		Options: options.Index().SetUnique(true),
+	})
+	if err != nil {
+		return err
+	}
+	log.Printf("[Mongo] Create unique index 'serial' of collection 'device'")
+	_, err = m.colDevice.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys:    bson.M{"serial": 1},
 		Options: options.Index().SetUnique(true),
 	})
 	if err != nil {

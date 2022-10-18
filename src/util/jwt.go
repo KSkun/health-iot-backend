@@ -32,11 +32,12 @@ func ValidateJWTToken(tokenStr string) (string, error) {
 	if os.Getenv("JWT_NO_VALIDATE") == "1" {
 		options = append(options, jwt.WithoutClaimsValidation())
 	}
-	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+	claims := jwt.RegisteredClaims{}
+	_, err := jwt.ParseWithClaims(tokenStr, &claims, func(token *jwt.Token) (interface{}, error) {
 		return config.C.JWTConfig.SecretBytes, nil
 	}, options...)
 	if err != nil {
 		return "", err
 	}
-	return token.Claims.(jwt.RegisteredClaims).Subject, nil
+	return claims.Subject, nil
 }

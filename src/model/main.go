@@ -9,8 +9,11 @@ import (
 const defaultTimeout = 100 * time.Millisecond // 100 ms
 
 type IModel interface {
+	// user.go
 	CreateUser(name string, password string) (primitive.ObjectID, error)
 	GetUserByName(name string) (UserObject, bool, error)
+	// device.go
+	CreateDevice(name string, serial string, ownerID primitive.ObjectID) (primitive.ObjectID, error)
 }
 
 var M IModel

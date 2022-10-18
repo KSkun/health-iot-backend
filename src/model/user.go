@@ -8,8 +8,8 @@ import (
 )
 
 type UserObject struct {
-	ID       primitive.ObjectID `bson:"_id"`
-	Name     string             `bson:"name"`
+	ID       primitive.ObjectID `bson:"_id"`  // Unique index
+	Name     string             `bson:"name"` // Unique index
 	Password []byte             `bson:"password"`
 }
 

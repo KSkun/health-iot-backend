@@ -10,12 +10,7 @@ import (
 	"net/http"
 )
 
-func initUserGroupV1(group *echo.Group) {
-	group.POST("", handlerCreateUserV1)
-	group.GET("/token", handlerLoginV1)
-}
-
-func handlerCreateUserV1(ctx echo.Context) error {
+func HandlerCreateUserV1(ctx echo.Context) error {
 	req := param.ReqUserSimpleV1{}
 	if err := ctx.Bind(&req); err != nil {
 		return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
@@ -23,7 +18,6 @@ func handlerCreateUserV1(ctx echo.Context) error {
 	if err := ctx.Validate(req); err != nil {
 		return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
 	}
-
 	// Insert user to database
 	id, err := model.M.CreateUser(req.Name, req.Password)
 	if mongo.IsDuplicateKeyError(err) {
@@ -35,7 +29,7 @@ func handlerCreateUserV1(ctx echo.Context) error {
 	return util.SuccessResp(ctx, http.StatusOK, echo.Map{"id": id.Hex()})
 }
 
-func handlerLoginV1(ctx echo.Context) error {
+func HandlerLoginV1(ctx echo.Context) error {
 	req := param.ReqUserSimpleV1{}
 	if err := ctx.Bind(&req); err != nil {
 		return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
