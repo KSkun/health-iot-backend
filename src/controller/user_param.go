@@ -1,4 +1,4 @@
-package param
+package controller
 
 type ReqUserSimpleV1 struct {
 	Name     string `json:"name" query:"name" validate:"required"`

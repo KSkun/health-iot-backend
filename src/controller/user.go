@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"github.com/KSkun/health-iot-backend/controller/param"
 	"github.com/KSkun/health-iot-backend/model"
 	"github.com/KSkun/health-iot-backend/util"
 	"github.com/labstack/echo/v4"
@@ -11,7 +10,7 @@ import (
 )
 
 func HandlerCreateUserV1(ctx echo.Context) error {
-	req := param.ReqUserSimpleV1{}
+	req := ReqUserSimpleV1{}
 	if err := ctx.Bind(&req); err != nil {
 		return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
 	}
@@ -30,7 +29,7 @@ func HandlerCreateUserV1(ctx echo.Context) error {
 }
 
 func HandlerLoginV1(ctx echo.Context) error {
-	req := param.ReqUserSimpleV1{}
+	req := ReqUserSimpleV1{}
 	if err := ctx.Bind(&req); err != nil {
 		return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
 	}

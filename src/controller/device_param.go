@@ -1,4 +1,4 @@
-package param
+package controller
 
 import "github.com/KSkun/health-iot-backend/model"
 

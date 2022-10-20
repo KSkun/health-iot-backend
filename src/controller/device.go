@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"github.com/KSkun/health-iot-backend/controller/param"
 	"github.com/KSkun/health-iot-backend/model"
 	"github.com/KSkun/health-iot-backend/util"
 	"github.com/labstack/echo/v4"
@@ -11,7 +10,7 @@ import (
 )
 
 func HandlerCreateDeviceV1(ctx echo.Context) error {
-	req := param.ReqCreateDeviceV1{}
+	req := ReqCreateDeviceV1{}
 	if err := ctx.Bind(&req); err != nil {
 		return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
 	}
@@ -36,9 +35,9 @@ func HandlerGetDevicesV1(ctx echo.Context) error {
 	if err != nil {
 		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
 	}
-	devices := []param.RspDeviceSimpleV1{}
+	devices := []RspDeviceSimpleV1{}
 	for _, d_ := range devices_ {
-		d := param.RspDeviceSimpleV1{}
+		d := RspDeviceSimpleV1{}
 		d.FromDeviceObject(d_)
 		devices = append(devices, d)
 	}
