@@ -7,12 +7,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UserObject struct {
-	ID       primitive.ObjectID `bson:"_id"`  // Unique index
-	Name     string             `bson:"name"` // Unique index
-	Password []byte             `bson:"password"`
-}
-
 func (m *mongoModel) CreateUser(name string, password string) (primitive.ObjectID, error) {
 	// Hash password
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

@@ -31,7 +31,6 @@ func HandlerCreateDeviceV1(ctx echo.Context) error {
 }
 
 func HandlerGetDevicesV1(ctx echo.Context) error {
-	// Insert device to database
 	userID := ctx.Get("id").(primitive.ObjectID)
 	devices_, err := model.M.GetDevicesByOwner(userID)
 	if err != nil {
@@ -44,4 +43,28 @@ func HandlerGetDevicesV1(ctx echo.Context) error {
 		devices = append(devices, d)
 	}
 	return util.SuccessResp(ctx, http.StatusOK, echo.Map{"devices": devices})
+}
+
+func HandlerGetDeviceV1(ctx echo.Context) error {
+	// Convert hex string to ObjectId
+	idHex := ctx.Param("id")
+	if idHex == "" {
+		return util.FailedResp(ctx, http.StatusBadRequest, "invalid device id", "empty id")
+	}
+	id, err := primitive.ObjectIDFromHex(idHex)
+	if err != nil {
+		return util.FailedResp(ctx, http.StatusBadRequest, "invalid device id", err.Error())
+	}
+	// Query device and return
+	userID := ctx.Get("id").(primitive.ObjectID)
+	device, err := model.M.GetDevice(id)
+	if err != nil {
+		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
+	}
+	if device.OwnerID != userID {
+		return util.FailedResp(ctx, http.StatusForbidden, "forbidden", "device is not registered to user")
+	}
+	device.CompileJSON()
+	return util.SuccessResp(ctx, http.StatusOK,
+		echo.Map{"device": device, "warnings": device.Warnings(), "online": device.IsOnline()})
 }

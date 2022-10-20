@@ -13,3 +13,8 @@ GET http://localhost:8000/api/v1/device/list
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJoZWFsdGgtaW90LWJhY2tlbmQiLCJzdWIiOiI2MzRkM2M2OWYxMjM3YzhkOTRlZDA3NmMiLCJleHAiOjE2NjYxNjMwMzksImlhdCI6MTY2NjA3NjYzOX0.nunqv648U-NMVIczbEeKKtW4oVxnP0gOuoqbA7-r_AU
 
 ###
+
+GET http://localhost:8000/api/v1/device/634e534d09251b608c5cbd76
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJoZWFsdGgtaW90LWJhY2tlbmQiLCJzdWIiOiI2MzRkM2M2OWYxMjM3YzhkOTRlZDA3NmMiLCJleHAiOjE2NjYxNjMwMzksImlhdCI6MTY2NjA3NjYzOX0.nunqv648U-NMVIczbEeKKtW4oVxnP0gOuoqbA7-r_AU
+
+###
