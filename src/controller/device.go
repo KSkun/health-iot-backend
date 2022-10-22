@@ -67,3 +67,36 @@ func HandlerGetDeviceV1(ctx echo.Context) error {
 	return util.SuccessResp(ctx, http.StatusOK,
 		echo.Map{"device": device, "warnings": device.Warnings(), "online": device.IsOnline()})
 }
+
+func HandlerTurnOffDeviceWarningV1(ctx echo.Context) error {
+	req := ReqTurnOffDeviceWarningV1{}
+	if err := ctx.Bind(&req); err != nil {
+		return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
+	}
+	if err := ctx.Validate(req); err != nil {
+		return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
+	}
+	// Turning off needs a `false` value
+	if req.Value != 0 {
+		return util.FailedResp(ctx, http.StatusNotImplemented, "request parameter unsupported", "value param must be 0")
+	}
+	// Convert hex string to ObjectId
+	id, err := primitive.ObjectIDFromHex(req.IDHex)
+	if err != nil {
+		return util.FailedResp(ctx, http.StatusBadRequest, "invalid device id", err.Error())
+	}
+	// Update device warning status
+	userID := ctx.Get("id").(primitive.ObjectID)
+	device, err := model.M.GetDevice(id)
+	if err != nil {
+		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
+	}
+	if device.OwnerID != userID {
+		return util.FailedResp(ctx, http.StatusForbidden, "forbidden", "device is not registered to user")
+	}
+	err = model.M.TurnOffDeviceWarning(id)
+	if err != nil {
+		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
+	}
+	return util.SuccessResp(ctx, http.StatusOK, true)
+}

@@ -45,3 +45,10 @@ func (m *mongoModel) GetDevice(id primitive.ObjectID) (DeviceObject, error) {
 	}
 	return device, nil
 }
+
+func (m *mongoModel) TurnOffDeviceWarning(id primitive.ObjectID) error {
+	ctx, cancel := defaultContext()
+	defer cancel()
+	_, err := m.colDevice.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"warning": false}})
+	return err
+}

@@ -35,15 +35,17 @@ type DeviceSensorObject struct {
 }
 
 type DeviceObject struct {
-	ID             primitive.ObjectID `bson:"_id" json:"-"` // Unique index
-	IDHex          string             `bson:"-" json:"id"`
-	Name           string             `bson:"name" json:"name"`
-	Serial         string             `bson:"serial" json:"serial"` // Unique index
-	OwnerID        primitive.ObjectID `bson:"owner_id" json:"-"`
-	OwnerIDHex     string             `bson:"-" json:"owner_id"`
-	LastReportTime int64              `bson:"last_report_time" json:"last_report_time"`
-	Status         DeviceStatusObject `bson:"status" json:"status"`
-	Sensor         DeviceSensorObject `bson:"sensor" json:"sensor"`
+	ID              primitive.ObjectID `bson:"_id" json:"-"` // Unique index
+	IDHex           string             `bson:"-" json:"id"`  // Only for HTTP response, excluded from BSON
+	Name            string             `bson:"name" json:"name"`
+	Serial          string             `bson:"serial" json:"serial"` // Unique index
+	OwnerID         primitive.ObjectID `bson:"owner_id" json:"-"`
+	OwnerIDHex      string             `bson:"-" json:"owner_id"` // Only for HTTP response, excluded from BSON
+	LastReportTime  int64              `bson:"last_report_time" json:"last_report_time"`
+	Status          DeviceStatusObject `bson:"status" json:"status"`
+	Sensor          DeviceSensorObject `bson:"sensor" json:"sensor"`
+	Warning         bool               `bson:"warning" json:"warning"`
+	LastWarningTime int64              `bson:"last_warning_time" json:"last_warning_time"`
 }
 
 type ReportObject struct {

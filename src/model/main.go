@@ -16,6 +16,7 @@ type IModel interface {
 	CreateDevice(name string, serial string, ownerID primitive.ObjectID) (primitive.ObjectID, error)
 	GetDevicesByOwner(ownerID primitive.ObjectID) ([]DeviceObject, error)
 	GetDevice(id primitive.ObjectID) (DeviceObject, error)
+	TurnOffDeviceWarning(id primitive.ObjectID) error
 }
 
 var M IModel

@@ -18,12 +18,17 @@ func main() {
 	global.EchoInst.Validator = middleware.NewValidator()
 	global.EchoInst.Use(middleware.Logger())
 	global.EchoInst.Use(echoMiddleware.Recover())
-	global.EchoInst.Use(echoMiddleware.CORS())
 	global.EchoInst.Debug = config.Debug
 
 	config.InitConfig()
 	model.InitModel()
 	router.InitRouter(global.EchoInst)
+
+	// Only enable cross-site in debug mode
+	// Deploy APIs and frontend pages in the same domain when in production env
+	if config.Debug {
+		global.EchoInst.Use(echoMiddleware.CORS())
+	}
 
 	log.Printf("[Main] Starting server")
 	addr := fmt.Sprintf("%s:%d", config.C.AppConfig.Addr, config.C.AppConfig.Port)

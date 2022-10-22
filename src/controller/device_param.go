@@ -24,3 +24,8 @@ func (r *RspDeviceSimpleV1) FromDeviceObject(o model.DeviceObject) {
 	r.Battery = o.Status.Battery
 	r.Warning = len(o.Warnings()) > 0
 }
+
+type ReqTurnOffDeviceWarningV1 struct {
+	IDHex string `param:"id" validate:"required"`
+	Value int    `json:"value"`
+}
