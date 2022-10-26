@@ -56,5 +56,5 @@ func HandlerLoginV1(ctx echo.Context) error {
 	if err != nil {
 		return util.FailedResp(ctx, http.StatusInternalServerError, "internal server error", err.Error())
 	}
-	return util.SuccessResp(ctx, http.StatusOK, echo.Map{"token": tokenStr, "expire_time": expireTime.Unix()})
+	return util.SuccessResp(ctx, http.StatusOK, echo.Map{"token": tokenStr, "expire_time": expireTime.UnixMilli()})
 }

@@ -4,9 +4,11 @@ import (
 	"github.com/KSkun/health-iot-backend/model"
 	"github.com/KSkun/health-iot-backend/util"
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
+	"time"
 )
 
 func HandlerCreateDeviceV1(ctx echo.Context) error {
@@ -99,4 +101,28 @@ func HandlerTurnOffDeviceWarningV1(ctx echo.Context) error {
 		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
 	}
 	return util.SuccessResp(ctx, http.StatusOK, true)
+}
+
+func HandlerAddReportDataV1(ctx echo.Context) error {
+	req := ReqAddReportDataV1{}
+	if err := ctx.Bind(&req); err != nil {
+		return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
+	}
+	if err := ctx.Validate(req); err != nil {
+		return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
+	}
+	// Query device ID
+	device, found, err := model.M.GetDeviceBySerial(req.Serial)
+	if err != nil {
+		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
+	}
+	if !found {
+		return util.FailedResp(ctx, http.StatusForbidden, "device not registered", "")
+	}
+	// Insert report data
+	reportID, err := model.M.AddReportData(device.ID, time.Now().UnixMilli(), req.Status, bson.M(req.Sensor))
+	if err != nil {
+		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
+	}
+	return util.SuccessResp(ctx, http.StatusOK, echo.Map{"id": reportID.Hex()})
 }

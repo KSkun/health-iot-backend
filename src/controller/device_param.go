@@ -1,6 +1,9 @@
 package controller
 
-import "github.com/KSkun/health-iot-backend/model"
+import (
+	"github.com/KSkun/health-iot-backend/model"
+	"github.com/labstack/echo/v4"
+)
 
 type ReqCreateDeviceV1 struct {
 	Name   string `json:"name"`
@@ -28,4 +31,10 @@ func (r *RspDeviceSimpleV1) FromDeviceObject(o model.DeviceObject) {
 type ReqTurnOffDeviceWarningV1 struct {
 	IDHex string `param:"id" validate:"required"`
 	Value int    `json:"value"`
+}
+
+type ReqAddReportDataV1 struct {
+	Serial string                   `json:"serial" validate:"required"`
+	Status model.DeviceStatusObject `json:"status"`
+	Sensor echo.Map                 `json:"sensor"`
 }

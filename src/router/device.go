@@ -11,4 +11,5 @@ func initDeviceGroupV1(group *echo.Group) {
 	group.GET("/list", controller.HandlerGetDevicesV1, middleware.JWT)
 	group.GET("/:id", controller.HandlerGetDeviceV1, middleware.JWT)
 	group.PUT("/:id/warning", controller.HandlerTurnOffDeviceWarningV1, middleware.JWT)
+	group.POST("/data", controller.HandlerAddReportDataV1) // for IoT device
 }

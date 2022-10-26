@@ -1,6 +1,7 @@
 package model
 
 import (
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/net/context"
 	"time"
@@ -16,7 +17,9 @@ type IModel interface {
 	CreateDevice(name string, serial string, ownerID primitive.ObjectID) (primitive.ObjectID, error)
 	GetDevicesByOwner(ownerID primitive.ObjectID) ([]DeviceObject, error)
 	GetDevice(id primitive.ObjectID) (DeviceObject, error)
+	GetDeviceBySerial(serial string) (DeviceObject, bool, error)
 	TurnOffDeviceWarning(id primitive.ObjectID) error
+	AddReportData(deviceID primitive.ObjectID, time int64, status DeviceStatusObject, sensor bson.M) (primitive.ObjectID, error)
 }
 
 var M IModel

@@ -14,6 +14,7 @@ import (
 const (
 	colNameUser   = "user"
 	colNameDevice = "device"
+	colNameReport = "report"
 )
 
 type mongoModel struct {
@@ -21,6 +22,7 @@ type mongoModel struct {
 	database  *mongo.Database
 	colUser   *mongo.Collection
 	colDevice *mongo.Collection
+	colReport *mongo.Collection
 }
 
 func initMongo() {
@@ -49,6 +51,7 @@ func initMongo() {
 	model := mongoModel{client: client, database: db}
 	model.colUser = model.database.Collection(colNameUser)
 	model.colDevice = model.database.Collection(colNameDevice)
+	model.colReport = model.database.Collection(colNameReport)
 	// Init mongo database
 	if !exists || os.Getenv("MONGO_FORCE_INIT") == "1" {
 		log.Printf("[Mongo] Database does not exists, initializing")
