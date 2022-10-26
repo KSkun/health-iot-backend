@@ -28,8 +28,8 @@ type DeviceStatusObject struct {
 type DeviceSensorObject struct {
 	HeartRate   int     `bson:"heart_rate" json:"heart_rate"`
 	BloodOxygen int     `bson:"blood_oxygen" json:"blood_oxygen"`
-	Longitude   float32 `bson:"longitude" json:"longitude"`
-	Latitude    float32 `bson:"latitude" json:"latitude"`
+	Longitude   float64 `bson:"longitude" json:"longitude"`
+	Latitude    float64 `bson:"latitude" json:"latitude"`
 	SOSWarning  bool    `bson:"sos_warning" json:"sos_warning"`
 	FallWarning bool    `bson:"fall_warning" json:"fall_warning"`
 }

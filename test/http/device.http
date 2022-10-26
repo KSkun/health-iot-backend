@@ -35,6 +35,8 @@ Content-Type: application/json
     "wearing": true
   },
   "sensor": {
-    "heart_rate": 70
+    "heart_rate": 70,
+    "longitude": 116.470098,
+    "latitude": 39.992838
   }
 }

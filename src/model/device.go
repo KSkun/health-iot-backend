@@ -95,7 +95,7 @@ func (m *mongoModel) AddReportData(deviceID primitive.ObjectID, time int64, stat
 		}
 		reportID = res.InsertedID.(primitive.ObjectID)
 		// Update device object
-		updateFields := bson.M{"status": status}
+		updateFields := bson.M{"status": status, "last_report_time": time}
 		for k, v := range sensor {
 			updateFields["sensor."+k] = v
 		}
