@@ -35,25 +35,21 @@ type DeviceSensorObject struct {
 }
 
 type DeviceObject struct {
-	ID              primitive.ObjectID `bson:"_id" json:"-"` // Unique index
-	IDHex           string             `bson:"-" json:"id"`  // Only for HTTP response, excluded from BSON
-	Name            string             `bson:"name" json:"name"`
-	Serial          string             `bson:"serial" json:"serial"` // Unique index
-	OwnerID         primitive.ObjectID `bson:"owner_id" json:"-"`
-	OwnerIDHex      string             `bson:"-" json:"owner_id"` // Only for HTTP response, excluded from BSON
-	LastReportTime  int64              `bson:"last_report_time" json:"last_report_time"`
-	Status          DeviceStatusObject `bson:"status" json:"status"`
-	Sensor          DeviceSensorObject `bson:"sensor" json:"sensor"`
-	Warning         bool               `bson:"warning" json:"warning"`
-	LastWarningTime int64              `bson:"last_warning_time" json:"last_warning_time"`
+	ID             primitive.ObjectID `bson:"_id" json:"id"` // Unique index
+	Name           string             `bson:"name" json:"name"`
+	Serial         string             `bson:"serial" json:"serial"` // Unique index
+	OwnerID        primitive.ObjectID `bson:"owner_id" json:"owner_id"`
+	LastReportTime int64              `bson:"last_report_time" json:"last_report_time"`
+	Status         DeviceStatusObject `bson:"status" json:"status"`
+	Sensor         DeviceSensorObject `bson:"sensor" json:"sensor"`
 }
 
 type ReportObject struct {
-	ID       primitive.ObjectID `bson:"_id"`
-	DeviceID primitive.ObjectID `bson:"device_id"`
-	Time     int64              `bson:"time"`
-	Status   DeviceStatusObject `bson:"status"`
-	Sensor   bson.M             `bson:"sensor"`
+	ID       primitive.ObjectID `bson:"_id" json:"id"`
+	DeviceID primitive.ObjectID `bson:"device_id" json:"device_id"`
+	Time     int64              `bson:"time" json:"time"`
+	Status   DeviceStatusObject `bson:"status" json:"status"`
+	Sensor   bson.M             `bson:"sensor" json:"sensor"`
 }
 
 func (o DeviceStatusObject) Warnings() []DeviceWarning {
@@ -101,7 +97,33 @@ func (o DeviceObject) IsOnline() bool {
 	return time.Now().Before(time.Unix(o.LastReportTime, 0).Add(config.C.AppConfig.OnlineTimeoutDuration))
 }
 
-func (o *DeviceObject) CompileJSON() {
-	o.IDHex = o.ID.Hex()
-	o.OwnerIDHex = o.OwnerID.Hex()
+func (o ReportObject) Warnings() []DeviceWarning {
+	warnings := []DeviceWarning{}
+	warnings = append(warnings, o.Status.Warnings()...)
+	for k, v := range o.Sensor {
+		if k == "heart_rate" {
+			value := int(v.(int32))
+			if value < config.C.AppConfig.HeartRateThreshold.Low {
+				warnings = append(warnings,
+					DeviceWarning{Field: "heart_rate", Type: WarningTypeTooLow, Message: "heart rate too low"})
+			}
+			if value > config.C.AppConfig.HeartRateThreshold.High {
+				warnings = append(warnings,
+					DeviceWarning{Field: "heart_rate", Type: WarningTypeTooHigh, Message: "heart rate too high"})
+			}
+		} else if k == "blood_oxygen" {
+			value := int(v.(int32))
+			if value < config.C.AppConfig.BloodOxygenThreshold {
+				warnings = append(warnings,
+					DeviceWarning{Field: "blood_oxygen", Type: WarningTypeTooLow, Message: "blood oxygen saturation too low"})
+			}
+		} else if k == "fall_warning" && v.(bool) {
+			warnings = append(warnings,
+				DeviceWarning{Field: "fall_warning", Type: WarningTypeWarning, Message: "fall warning"})
+		} else if k == "sos_warning" && v.(bool) {
+			warnings = append(warnings,
+				DeviceWarning{Field: "sos_warning", Type: WarningTypeWarning, Message: "sos"})
+		}
+	}
+	return warnings
 }

@@ -65,7 +65,6 @@ func HandlerGetDeviceV1(ctx echo.Context) error {
 	if device.OwnerID != userID {
 		return util.FailedResp(ctx, http.StatusForbidden, "forbidden", "device is not registered to user")
 	}
-	device.CompileJSON()
 	return util.SuccessResp(ctx, http.StatusOK,
 		echo.Map{"device": device, "warnings": device.Warnings(), "online": device.IsOnline()})
 }
@@ -125,4 +124,28 @@ func HandlerAddReportDataV1(ctx echo.Context) error {
 		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
 	}
 	return util.SuccessResp(ctx, http.StatusOK, echo.Map{"id": reportID.Hex()})
+}
+
+func HandlerGetReportDataV1(ctx echo.Context) error {
+	// Construct condition map from request
+	conditions := bson.M{}
+	deviceIDHex := ctx.QueryParam("device")
+	if deviceIDHex != "" {
+		deviceID, err := primitive.ObjectIDFromHex(deviceIDHex)
+		if err != nil {
+			return util.FailedResp(ctx, http.StatusBadRequest, "bad request", err.Error())
+		}
+		conditions["device_id"] = deviceID
+	}
+	// Query for report data
+	userID := ctx.Get("id").(primitive.ObjectID)
+	reports, err := model.M.GetReportDataByOwner(userID, conditions)
+	if err != nil {
+		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
+	}
+	reportsWithWarnings := []echo.Map{}
+	for _, r := range reports {
+		reportsWithWarnings = append(reportsWithWarnings, echo.Map{"report": r, "warnings": r.Warnings()})
+	}
+	return util.SuccessResp(ctx, http.StatusOK, echo.Map{"reports": reportsWithWarnings})
 }

@@ -72,6 +72,25 @@ func (m *mongoModel) TurnOffDeviceWarning(id primitive.ObjectID) error {
 	return err
 }
 
+func prepareSensorMap(sensor bson.M) bson.M {
+	prepared := bson.M{}
+	for k, v := range sensor {
+		// int type
+		if k == "heart_rate" || k == "blood_oxygen" {
+			prepared[k] = int(v.(float64))
+		}
+		// float64 type
+		if k == "longitude" || k == "latitude" {
+			prepared[k] = v
+		}
+		// bool type
+		if k == "sos_warning" || k == "fall_warning" {
+			prepared[k] = v
+		}
+	}
+	return prepared
+}
+
 func (m *mongoModel) AddReportData(deviceID primitive.ObjectID, time int64, status DeviceStatusObject, sensor bson.M) (primitive.ObjectID, error) {
 	ctx, cancel := defaultContext()
 	defer cancel()
@@ -87,7 +106,7 @@ func (m *mongoModel) AddReportData(deviceID primitive.ObjectID, time int64, stat
 			DeviceID: deviceID,
 			Time:     time,
 			Status:   status,
-			Sensor:   sensor,
+			Sensor:   prepareSensorMap(sensor),
 		})
 		if err != nil {
 			sessionCtx.AbortTransaction(sessionCtx)
@@ -111,4 +130,24 @@ func (m *mongoModel) AddReportData(deviceID primitive.ObjectID, time int64, stat
 		return nil
 	})
 	return reportID, err
+}
+
+func (m *mongoModel) GetReportDataByOwner(ownerID primitive.ObjectID, conditions bson.M) ([]ReportObject, error) {
+	ctx, cancel := defaultContext()
+	defer cancel()
+	res, err := m.colReport.Aggregate(ctx, mongo.Pipeline{
+		{{"$lookup", bson.M{"from": "device", "localField": "device_id", "foreignField": "_id", "as": "device"}}},
+		{{"$match", bson.M{"device.owner_id": ownerID}}},
+		{{"$match", conditions}},
+		{{"$project", bson.M{"device": 0}}},
+	})
+	if err != nil {
+		return nil, err
+	}
+	reports := []ReportObject{}
+	err = res.All(ctx, &reports)
+	if err != nil {
+		return nil, err
+	}
+	return reports, nil
 }

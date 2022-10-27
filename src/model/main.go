@@ -20,6 +20,7 @@ type IModel interface {
 	GetDeviceBySerial(serial string) (DeviceObject, bool, error)
 	TurnOffDeviceWarning(id primitive.ObjectID) error
 	AddReportData(deviceID primitive.ObjectID, time int64, status DeviceStatusObject, sensor bson.M) (primitive.ObjectID, error)
+	GetReportDataByOwner(ownerID primitive.ObjectID, conditions bson.M) ([]ReportObject, error)
 }
 
 var M IModel
