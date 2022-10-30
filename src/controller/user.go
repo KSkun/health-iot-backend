@@ -4,6 +4,7 @@ import (
 	"github.com/KSkun/health-iot-backend/model"
 	"github.com/KSkun/health-iot-backend/util"
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -57,4 +58,13 @@ func HandlerLoginV1(ctx echo.Context) error {
 		return util.FailedResp(ctx, http.StatusInternalServerError, "internal server error", err.Error())
 	}
 	return util.SuccessResp(ctx, http.StatusOK, echo.Map{"token": tokenStr, "expire_time": expireTime.UnixMilli()})
+}
+
+func HandlerGetUserV1(ctx echo.Context) error {
+	userID := ctx.Get("id").(primitive.ObjectID)
+	user, err := model.M.GetUser(userID)
+	if err != nil {
+		return util.FailedResp(ctx, http.StatusInternalServerError, "database error", err.Error())
+	}
+	return util.SuccessResp(ctx, http.StatusOK, user)
 }

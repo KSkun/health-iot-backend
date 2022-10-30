@@ -11,3 +11,8 @@ Content-Type: application/json
 GET http://localhost:8000/api/v1/user/token?name=test&password=111111
 
 ###
+
+GET http://localhost:8000/api/v1/user
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJoZWFsdGgtaW90LWJhY2tlbmQiLCJzdWIiOiI2MzUzNjJkZWE1YWMyY2Q2NThiMzk2NmYiLCJleHAiOjE2NjY0OTU1ODYsImlhdCI6MTY2NjQwOTE4Nn0.NrZr5S9TpyONJiCbeYiBBH3s7Pr9pJ61upvwFaglb6I
+
+###

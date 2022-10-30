@@ -41,3 +41,18 @@ func (m *mongoModel) GetUserByName(name string) (UserObject, bool, error) {
 	}
 	return obj, true, nil
 }
+
+func (m *mongoModel) GetUser(id primitive.ObjectID) (UserObject, error) {
+	ctx, cancel := defaultContext()
+	defer cancel()
+	res := m.colUser.FindOne(ctx, bson.M{"_id": id})
+	if res.Err() != nil {
+		return UserObject{}, res.Err()
+	}
+	obj := UserObject{}
+	err := res.Decode(&obj)
+	if err != nil {
+		return UserObject{}, err
+	}
+	return obj, nil
+}

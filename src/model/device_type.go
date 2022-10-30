@@ -94,7 +94,7 @@ func (o DeviceObject) Warnings() []DeviceWarning {
 }
 
 func (o DeviceObject) IsOnline() bool {
-	return time.Now().Before(time.Unix(o.LastReportTime, 0).Add(config.C.AppConfig.OnlineTimeoutDuration))
+	return time.Now().Before(time.UnixMilli(o.LastReportTime).Add(config.C.AppConfig.OnlineTimeoutDuration))
 }
 
 func (o ReportObject) Warnings() []DeviceWarning {

@@ -13,6 +13,7 @@ type IModel interface {
 	// user.go
 	CreateUser(name string, password string) (primitive.ObjectID, error)
 	GetUserByName(name string) (UserObject, bool, error)
+	GetUser(id primitive.ObjectID) (UserObject, error)
 	// device.go
 	CreateDevice(name string, serial string, ownerID primitive.ObjectID) (primitive.ObjectID, error)
 	GetDevicesByOwner(ownerID primitive.ObjectID) ([]DeviceObject, error)
