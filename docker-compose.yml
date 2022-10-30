@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:5.0.2
+    volumes:
+      - ./data:/data/db
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=Asia/Shanghai
+    container_name: health-iot_mongo
+    expose:
+      - "27017"
+    networks:
+      - health-iot
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+  app:
+    build: .
+    environment:
+      - TZ=Asia/Shanghai
+      - CONFIG_FILE=prod.yml
+    ports:
+      - "127.0.0.1:30001:8000"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./workdir:/workdir
+    depends_on:
+      - mongo
+    container_name: health-iot_app
+    networks:
+      - health-iot
+    restart: always
+networks:
+  health-iot:
